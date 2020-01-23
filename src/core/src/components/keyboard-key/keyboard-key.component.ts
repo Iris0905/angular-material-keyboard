@@ -243,6 +243,7 @@ export class MatKeyboardKeyComponent implements OnInit {
 
   // Handle repeating keys. Keypress logic derived from onClick()
   onPointerDown() {
+    this.cancelRepeat();
     this._repeatState = false;
     this._repeatTimeoutHandler = setTimeout(() => {
       // Initialize keypress variables
