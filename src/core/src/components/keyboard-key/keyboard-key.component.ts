@@ -141,18 +141,26 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
   get inputValue(): string {
     if (this.control) {
       return this.control.value;
-    } else if (this.input && this.input.nativeElement && this.input.nativeElement.value) {
-      return this.input.nativeElement.value;
-    } else {
-      return '';
     }
+
+    let el = this._getInputElement();
+    if (el && el.value) {
+      return el.value;
+    }
+
+    return '';
   }
 
   set inputValue(inputValue: string) {
     if (this.control) {
       this.control.setValue(inputValue);
-    } else if (this.input && this.input.nativeElement) {
-      this.input.nativeElement.value = inputValue;
+      return;
+    }
+
+    let el = this._getInputElement();
+    if (el) {
+      el.value = inputValue;
+      return;
     }
   }
 
@@ -234,13 +242,13 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
 
     if (char && this.input) {
       this.replaceSelectedText(char);
-      this._setCursorPosition(caret + 1);
     }
 
     // Dispatch Input Event for Angular to register a change
-    if (this.input && this.input.nativeElement) {
+    let el = this._getInputElement();
+    if (el) {
       setTimeout(() => {
-        this.input.nativeElement.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('input', { bubbles: true }));
       });
     }
   }
@@ -296,11 +304,11 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
 
         if (char && this.input) {
           this.replaceSelectedText(char);
-          this._setCursorPosition(caret + 1);
         }
 
-        if (this.input && this.input.nativeElement) {
-          setTimeout(() => this.input.nativeElement.dispatchEvent(new Event('input', { bubbles: true })));
+        let el = this._getInputElement();
+        if (el) {
+          setTimeout(() => el.dispatchEvent(new Event('input', { bubbles: true })));
         }
       }, REPEAT_INTERVAL);
     }, REPEAT_TIMEOUT);
@@ -331,21 +339,23 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
       selectionLength = 1;
     }
 
-    const headPart = value.slice(0, caret);
-    const endPart = value.slice(caret + selectionLength);
-
-    this.inputValue = [headPart, endPart].join('');
-    this._setCursorPosition(caret);
+    this._getInputElement().setRangeText("", caret, caret + selectionLength);
   }
 
   private replaceSelectedText(char: string): void {
     const value = this.inputValue ? this.inputValue.toString() : '';
-    const caret = this.input ? this._getCursorPosition() : 0;
     const selectionLength = this._getSelectionLength();
+
+    let el = this._getInputElement();
+    if (el && 'maxLength' in el && el.maxLength > 0 && value.length - selectionLength + char.length > el.maxLength) {
+      return;
+    }
+
+    const caret = this.input ? this._getCursorPosition() : 0;
     const headPart = value.slice(0, caret);
     const endPart = value.slice(caret + selectionLength);
-
-    this.inputValue = [headPart, char, endPart].join('');
+    this._getInputElement().setRangeText(char, caret, caret + selectionLength);
+    this._setCursorPosition(caret + char.length);
   }
 
   // TODO: Include for repeating keys as well (if this gets implemented)
@@ -376,9 +386,10 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if ('selectionStart' in this.input.nativeElement) {
+    let el = this._getInputElement();
+    if (el && 'selectionStart' in el) {
       // Standard-compliant browsers
-      return this.input.nativeElement.selectionStart;
+      return el.selectionStart;
     } else if ('selection' in window.document) {
       // IE
       this.input.nativeElement.focus();
@@ -396,12 +407,11 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if ('selectionEnd' in this.input.nativeElement) {
+    let el = this._getInputElement();
+    if (el && 'selectionEnd' in el) {
       // Standard-compliant browsers
-      return this.input.nativeElement.selectionEnd - this.input.nativeElement.selectionStart;
-    }
-
-    if ('selection' in window.document) {
+      return el.selectionEnd - el.selectionStart;
+    } else if ('selection' in window.document) {
       // IE
       this.input.nativeElement.focus();
       const selection: any = window.document['selection'];
@@ -414,36 +424,55 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
   // tslint:disable one-line
   private _setCursorPosition(position: number): boolean {
     if (!this.input) {
-      return;
+      return false;
     }
 
-    this.inputValue = this.control.value;
+    if (this.control) {
+      this.inputValue = this.control.value;
+    }
     // ^ this is used to not only get "focus", but
     // to make sure we don't have it everything -selected-
     // (it causes an issue in chrome, and having it doesn't hurt any other browser)
-
-    if ('createTextRange' in this.input.nativeElement) {
-      const range = this.input.nativeElement.createTextRange();
+    let el = this._getInputElement();
+    // createTextRange is a IE only stuff
+    if (el && 'createTextRange' in el) {
+      const range = (el as any).createTextRange();
       range.move('character', position);
       range.select();
       return true;
-    } else {
+    } else if (el) {
       // (el.selectionStart === 0 added for Firefox bug)
-      if (this.input.nativeElement.selectionStart || this.input.nativeElement.selectionStart === 0) {
-        this.input.nativeElement.focus();
-        this.input.nativeElement.setSelectionRange(position, position);
+      if (el.selectionStart || el.selectionStart === 0) {
+        el.focus();
+        el.setSelectionRange(position, position);
         return true;
       }
       // fail city, fortunately this never happens (as far as I've tested) :)
-      else {
-        this.input.nativeElement.focus();
-        return false;
-      }
+      el.focus();
+      return false;
     }
+
+    return false;
   }
 
   private _isTextarea(): boolean {
-    return this.input && this.input.nativeElement && this.input.nativeElement.tagName === 'TEXTAREA';
+    let el = this._getInputElement();
+    if (!el) {
+      return false;
+    }
+
+    return el.tagName === 'TEXTAREA';
   }
 
+  private _getInputElement(): HTMLInputElement | undefined {
+    if (this.input && this.input.nativeElement) {
+      if (this.input.nativeElement.localName && this.input.nativeElement.localName.startsWith('ion-')) {
+        return this.input.nativeElement.firstChild;
+      } else {
+        return this.input.nativeElement;
+      }
+    }
+
+    return undefined;
+  }
 }

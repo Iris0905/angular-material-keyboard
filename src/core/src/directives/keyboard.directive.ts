@@ -6,7 +6,7 @@ import { MatKeyboardComponent } from '../components/keyboard/keyboard.component'
 import { MatKeyboardService } from '../services/keyboard.service';
 
 @Directive({
-  selector: 'input[matKeyboard], textarea[matKeyboard]'
+  selector: 'ion-input[matKeyboard], ion-textarea[matKeyboard], input[matKeyboard], textarea[matKeyboard]'
 })
 export class MatKeyboardDirective implements OnDestroy {
 
@@ -37,6 +37,7 @@ export class MatKeyboardDirective implements OnDestroy {
   }
 
   @HostListener('focus', ['$event'])
+  @HostListener('ionFocus', ['$event'])
   public showKeyboard() {
     this._keyboardRef = this._keyboardService.open(this.matKeyboard, {
       darkTheme: this.darkTheme,
@@ -60,6 +61,7 @@ export class MatKeyboardDirective implements OnDestroy {
   }
 
   @HostListener('blur', ['$event'])
+  @HostListener('ionBlur', ['$event'])
   public hideKeyboard() {
     if (this._keyboardRef) {
       this._keyboardRef.dismiss();
