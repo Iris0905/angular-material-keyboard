@@ -14,6 +14,10 @@ export class MatKeyboardDirective implements OnDestroy {
 
   @Input() matKeyboard: string;
 
+  @Input() active: boolean = true;
+
+  @Input() anchor: string = 'bottom';
+
   @Input() darkTheme: boolean;
 
   @Input() duration: number;
@@ -29,8 +33,8 @@ export class MatKeyboardDirective implements OnDestroy {
   @Output() shiftClick: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private _elementRef: ElementRef,
-              private _keyboardService: MatKeyboardService,
-              @Optional() @Self() private _control?: NgControl) {}
+    private _keyboardService: MatKeyboardService,
+    @Optional() @Self() private _control?: NgControl) { }
 
   ngOnDestroy() {
     this.hideKeyboard();
@@ -38,11 +42,16 @@ export class MatKeyboardDirective implements OnDestroy {
 
   @HostListener('focus', ['$event'])
   public showKeyboard() {
+
+    if (!this.active) {
+      return;
+    }
+
     this._keyboardRef = this._keyboardService.open(this.matKeyboard, {
       darkTheme: this.darkTheme,
       duration: this.duration,
       isDebug: this.isDebug
-    });
+    }, this.anchor);
 
     // reference the input element
     this._keyboardRef.instance.setInputInstance(this._elementRef);

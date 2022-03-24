@@ -27,6 +27,9 @@ export class MatKeyboardService {
 
   private _availableLocales: ILocaleMap = {};
 
+  /** Reference to the anchor position (top/bottom) */
+  private _anchor: string;
+
   /** Reference to the currently opened keyboard at *any* level. */
   private get _openedKeyboardRef(): MatKeyboardRef<MatKeyboardComponent> | null {
     const parent = this._parentKeyboard;
@@ -50,10 +53,10 @@ export class MatKeyboardService {
   }
 
   constructor(private _overlay: Overlay,
-              private _live: LiveAnnouncer,
-              @Inject(LOCALE_ID) private _defaultLocale: string,
-              @Inject(MAT_KEYBOARD_LAYOUTS) private _layouts: IKeyboardLayouts,
-              @Optional() @SkipSelf() private _parentKeyboard: MatKeyboardService) {
+    private _live: LiveAnnouncer,
+    @Inject(LOCALE_ID) private _defaultLocale: string,
+    @Inject(MAT_KEYBOARD_LAYOUTS) private _layouts: IKeyboardLayouts,
+    @Optional() @SkipSelf() private _parentKeyboard: MatKeyboardService) {
     // prepare available layouts mapping
     this._availableLocales = _applyAvailableLayouts(_layouts);
   }
@@ -131,8 +134,10 @@ export class MatKeyboardService {
    * @param layoutOrLocale A string representing the locale or the layout name to be used.
    * @param config Additional configuration options for the keyboard.
    */
-  open(layoutOrLocale: string = this._defaultLocale, config: MatKeyboardConfig = {}): MatKeyboardRef<MatKeyboardComponent> {
+  open(layoutOrLocale: string = this._defaultLocale, config: MatKeyboardConfig = {}, anchor: string = 'bottom'): MatKeyboardRef<MatKeyboardComponent> {
     const _config = _applyConfigDefaults(config);
+
+    this._anchor = anchor;
 
     return this.openFromComponent(layoutOrLocale, _config);
   }
@@ -210,11 +215,19 @@ export class MatKeyboardService {
       width: '100%'
     });
 
-    state.positionStrategy = this._overlay
-      .position()
-      .global()
-      .centerHorizontally()
-      .bottom('0');
+    if (this._anchor === 'bottom') {
+      state.positionStrategy = this._overlay
+        .position()
+        .global()
+        .centerHorizontally()
+        .bottom('0');
+    } else {
+      state.positionStrategy = this._overlay
+        .position()
+        .global()
+        .centerHorizontally()
+        .top('0');
+    }
 
     return this._overlay.create(state);
   }
