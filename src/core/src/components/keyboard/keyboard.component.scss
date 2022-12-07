@@ -1,17 +1,18 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
 
-$mat-typography-config: mat-typography-config();
+$mat-typography-config: mat.define-typography-config();
 $mat-keyboard-button-distance: 8px !default;
 $mat-keyboard-padding: 14px 24px !default;
 
 .mat-keyboard {
   &-wrapper {
-    background-color: mat-color($mat-grey, 100);
+    background-color: mat.get-color-from-palette(mat.$grey-palette, 100);
     border-radius: 2px;
     display: flex;
     font: {
-      family: mat-font-family($mat-typography-config);
-      size: mat-font-size($mat-typography-config, button);
+      family: mat.font-family($mat-typography-config);
+      size: mat.font-size($mat-typography-config, button);
     }
     justify-content: space-between;
     //color: white;
@@ -19,7 +20,7 @@ $mat-keyboard-padding: 14px 24px !default;
     padding: $mat-keyboard-padding;
 
     &.dark-theme {
-      background-color: mat-color($mat-grey, 800);
+      background-color: mat.get-color-from-palette(mat.$grey-palette, 800);
     }
   }
 
@@ -38,7 +39,7 @@ $mat-keyboard-padding: 14px 24px !default;
   }
 
   :host(.dark-theme) &-action {
-    color: mat-color($mat-grey, 100);
+    color: mat.get-color-from-palette(mat.$grey-palette, 100);
   }
 
   &-layout {
@@ -55,7 +56,7 @@ $mat-keyboard-padding: 14px 24px !default;
   &-col {
     box-sizing: border-box;
     flex: 1 1 auto;
-    padding: $mat-keyboard-button-distance / 2;
+    padding: calc($mat-keyboard-button-distance / 2);
   }
 
   &-key {
@@ -64,8 +65,8 @@ $mat-keyboard-padding: 14px 24px !default;
   }
 
   :host(.dark-theme) &-key {
-    background-color: mat-color($mat-grey, 700);
-    color: mat-color($mat-grey, 100);
+    background-color: mat.get-color-from-palette(mat.$grey-palette, 700);
+    color: mat.get-color-from-palette(mat.$grey-palette, 100);
   }
 
   // sass-lint:disable no-color-keywords no-color-literals

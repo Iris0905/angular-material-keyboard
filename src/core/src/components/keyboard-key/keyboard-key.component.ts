@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { MAT_KEYBOARD_DEADKEYS } from '../../configs/keyboard-deadkey.config';
 import { KeyboardClassKey } from '../../enums/keyboard-class-key.enum';
@@ -58,7 +58,7 @@ export class MatKeyboardKeyComponent implements OnInit, OnDestroy {
   input?: ElementRef;
 
   @Input()
-  control?: FormControl;
+  control?: UntypedFormControl;
 
   @Output()
   genericClick = new EventEmitter<MouseEvent>();

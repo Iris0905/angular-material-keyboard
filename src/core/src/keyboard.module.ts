@@ -22,42 +22,35 @@ import { MatKeyboardKebabCasePipe } from './pipes/kebab-case.pipe';
 import { MatKeyboardService } from './services/keyboard.service';
 
 @NgModule({
-  imports: [
-    // Angular modules
-    CommonModule,
-    OverlayModule,
-
-    // Cdk modules
-    PortalModule,
-
-    // Material modules
-    MatButtonModule,
-    MatCommonModule,
-    MatIconModule,
-    MatInputModule
-  ],
-  exports: [
-    MatKeyboardComponent,
-    MatKeyboardContainerComponent,
-    MatKeyboardKeyComponent,
-    MatKeyboardDirective
-  ],
-  declarations: [
-    MatKeyboardKebabCasePipe,
-    MatKeyboardComponent,
-    MatKeyboardContainerComponent,
-    MatKeyboardKeyComponent,
-    MatKeyboardDirective
-  ],
-  entryComponents: [
-    MatKeyboardComponent,
-    MatKeyboardContainerComponent,
-    MatKeyboardKeyComponent
-  ],
-  providers: [
-    MatKeyboardService,
-    { provide: MAT_KEYBOARD_DEADKEYS, useValue: keyboardDeadkeys },
-    { provide: MAT_KEYBOARD_LAYOUTS, useValue: keyboardLayouts }
-  ]
+    imports: [
+        // Angular modules
+        CommonModule,
+        OverlayModule,
+        // Cdk modules
+        PortalModule,
+        // Material modules
+        MatButtonModule,
+        MatCommonModule,
+        MatIconModule,
+        MatInputModule
+    ],
+    exports: [
+        MatKeyboardComponent,
+        MatKeyboardContainerComponent,
+        MatKeyboardKeyComponent,
+        MatKeyboardDirective
+    ],
+    declarations: [
+        MatKeyboardKebabCasePipe,
+        MatKeyboardComponent,
+        MatKeyboardContainerComponent,
+        MatKeyboardKeyComponent,
+        MatKeyboardDirective
+    ],
+    providers: [
+        MatKeyboardService,
+        { provide: MAT_KEYBOARD_DEADKEYS, useValue: keyboardDeadkeys },
+        { provide: MAT_KEYBOARD_LAYOUTS, useValue: keyboardLayouts }
+    ]
 })
 export class MatKeyboardModule {}

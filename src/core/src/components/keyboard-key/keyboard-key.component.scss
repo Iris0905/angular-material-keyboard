@@ -1,6 +1,7 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
 
-$mat-typography-config: mat-typography-config();
+$mat-typography-config: mat.define-typography-config();
 $mat-keyboard-button-distance: 8px !default;
 $mat-keyboard-capslock-animation-duration: $backdrop-animation-duration !default;
 $mat-keyboard-capslock-animation-timing-function: $backdrop-animation-timing-function !default;
@@ -10,8 +11,8 @@ $mat-keyboard-capslock-shine: #adff2f !default;
 :host {
   display: flex;
   font: {
-    family: mat-font-family($mat-typography-config);
-    size: mat-font-size($mat-typography-config, button);
+    family: mat.font-family($mat-typography-config);
+    size: mat.font-size($mat-typography-config, button);
   }
   justify-content: space-between;
   line-height: 20px;
@@ -23,19 +24,19 @@ $mat-keyboard-capslock-shine: #adff2f !default;
     width: 100%;
 
     &-active {
-      background-color: mat-color($mat-grey, 300);
+      background-color: mat.get-color-from-palette(mat.$grey-palette, 300);
     }
 
     &-pressed {
-      background-color: mat-color($mat-grey, 400);
+      background-color: mat.get-color-from-palette(mat.$grey-palette, 400);
     }
 
     // special treatment for caps lock
     &-capslock {
-      background-color: mat-color($mat-grey, 'A100');
+      background-color: mat.get-color-from-palette(mat.$grey-palette, 'A100');
 
       &:before {
-        background-color: mat-color($mat-grey, 400);
+        background-color: mat.get-color-from-palette(mat.$grey-palette, 400);
         border-radius: 100%;
         content: '';
         display: inline-block;
@@ -56,15 +57,15 @@ $mat-keyboard-capslock-shine: #adff2f !default;
   }
 
   :host-context(.dark-theme) &-key {
-    background-color: mat-color($mat-grey, 700);
-    color: mat-color($mat-grey, 100);
+    background-color: mat.get-color-from-palette(mat.$grey-palette, 700);
+    color: mat.get-color-from-palette(mat.$grey-palette, 100);
 
     &-active {
-      background-color: mat-color($mat-grey, 500);
+      background-color: mat.get-color-from-palette(mat.$grey-palette, 500);
     }
 
     &-pressed {
-      background-color: mat-color($mat-grey, 600);
+      background-color: mat.get-color-from-palette(mat.$grey-palette, 600);
     }
   }
 

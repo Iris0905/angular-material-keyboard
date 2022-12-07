@@ -11,7 +11,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noUnusedParameters": false,
-    "target": "es6",
+    "target": "es2020",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -31,7 +31,8 @@
       "angular-onscreen-material-keyboard": [
         "./src/core/src/public_api.ts"
       ]
-    }
+    },
+    "strictTemplates": false
   },
   "exclude": [
     ".ng_build"

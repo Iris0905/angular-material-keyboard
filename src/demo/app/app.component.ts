@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, LOCALE_ID, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, NgControl, NgForm, NgModel } from '@angular/forms';
+import { UntypedFormControl, NgControl, NgForm, NgModel } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { IKeyboardLayout, MatKeyboardComponent, MatKeyboardRef, MatKeyboardService, MAT_KEYBOARD_LAYOUTS } from 'angular-onscreen-material-keyboard';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   attachModelValue = '';
 
-  testControlValue = new FormControl({ value: 'Emmentaler', disabled: false });
+  testControlValue = new UntypedFormControl({ value: 'Emmentaler', disabled: false });
 
   get keyboardVisible(): boolean {
     return this._keyboardService.isOpened;
